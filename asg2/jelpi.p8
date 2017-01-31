@@ -13,7 +13,7 @@ __lua__
 
 -- config: num_players 1 or 2
 num_players = 1
-corrupt_mode = true
+corrupt_mode = false
 max_actors = 128
 
 music(0, 0, 3)
@@ -577,7 +577,7 @@ function outgame_logic()
  end
 end
 
-function _update()
+function __update()
 
 	foreach(actor, move_actor)		
 	foreach(sparkle, move_sparkle)
@@ -642,8 +642,7 @@ function draw_actor(pl)
  pal()
 end
 
-function _draw()
-
+function __draw()
  -- sky
 	camera (0, 0)
 	rectfill (0,0,127,127,12) 
@@ -716,6 +715,70 @@ function _draw()
   print("score:"..player.score)
   print(stat(1))
  end
+end
+
+--new update/draw functions
+
+realtime=true
+stepbystep=false
+slowmo=false
+
+function _update()	
+	--stepbystep
+	if stepbystep then
+		if btnp(5,1) then
+			__update()
+		end
+		if btnp(4,1) then
+				stepbystep=false
+				realtime=true
+				return
+		end
+	end
+	
+	--slowmo
+--im sure there is a way
+--better way to do this,
+--but i cant think of a
+--better way on pico 8
+	if slowmo then
+		for i=0,30000 do
+			if btnp(0,1) then
+				slowmo=false
+				realtime=true
+				return
+			end
+			if i/30 == 1000 then
+				__update()
+			end
+		end
+	end 
+	--normal
+	if realtime then
+		if btnp(4,1) then
+			stepbystep=true
+			realtime=false
+		end
+		if btnp(0,1) then
+			slowmo=true
+			realtime=false
+		end
+		__update()
+	end
+	
+end
+
+function _draw()
+	__draw()
+	if stepbystep then
+		print("stepbystep", 5,5)
+	end
+	if slowmo then
+		print("slowmo", 5,5)
+	end
+	if realtime then
+		print("realtime",5,5)
+	end
 end
 
 
