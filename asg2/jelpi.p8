@@ -126,6 +126,7 @@ function move_spawns(x0, y0)
     m = make_actor(3,x+0.5,y+1,-1)
     m.f0=val
     m.frame=val
+    
    end
    
    -- clear cel if spawned something
@@ -388,7 +389,7 @@ function move_actor(pl)
    while ( not (
    solid(pl.x-0.2, pl.y-1) or
    solid(pl.x+0.2, pl.y-1)))
-   do
+   do			
     pl.y = pl.y - 0.01
    end
 
@@ -808,22 +809,28 @@ function _update()
 	
 end
 
+--the "juicy" effect is just
+--the random colors for the 
+--debug text
 function _draw()
 	__draw()
+	color(flr(rnd(16)))
 	if _debug_enabled() then
 		for i=1,#log_entries do
 			print(log_entries[i],5,i*12)
 		end
 	end
 	log_entries={}
-	if stepbystep then
-		print("stepbystep", 5,5)
-	end
-	if slowmo then
-		print("slowmo", 5,5)
-	end
-	if realtime then
-		print("realtime",5,5)
+	if _debug_enabled() then
+		if stepbystep then
+			print("stepbystep", 5,5)
+		end
+		if slowmo then
+			print("slowmo", 5,5)
+		end
+		if realtime then
+			print("realtime",5,5)
+		end
 	end
 	
 end
