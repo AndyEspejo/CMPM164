@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 8
 __lua__
 -- the adventures of jelpi
--- by zep
+-- by zep			
 
 -- to do:
 -- levels and monsters
@@ -14,7 +14,7 @@ __lua__
 -- config: num_players 1 or 2
 num_players = 1
 corrupt_mode = false
-max_actors = 128
+max_actors = 128	
 
 music(0, 0, 3)
 
@@ -592,6 +592,10 @@ function __update()
  end
  
 	t=t+1
+	
+	_debug_log("cpu: "..stat(0))
+	_debug_log("mem: "..stat(1))
+	_debug_log("charge state: "..pl.charge)
 end
 
 function draw_sparkle(s)
@@ -715,10 +719,6 @@ function __draw()
   print("score:"..player.score)
   print(stat(1))
  end
- 
- if _debug_enabled() then
-		_debug_text(45,0,debug_message)	
-	end
 end
 
 --new stuff for asg2
@@ -727,7 +727,9 @@ realtime=true
 stepbystep=false
 slowmo=false
 debugdisplay=false
-debug_message=""
+log_entries={}
+text_entries={}
+rect_entries={}
 invincible=false
 
 function _debug_enabled()
@@ -741,7 +743,7 @@ end
 menuitem(1,"showdebug",_toggle_debug)
 
 function _debug_text(x,y,msg)
-	print(msg,x,y)
+	add(text_entries,{x=x,y=y,msg=msg})
 end
 
 function _debug_rect(x1,y1,x2,y2)
@@ -749,7 +751,7 @@ function _debug_rect(x1,y1,x2,y2)
 end
 
 function _debug_log(msg)
-	debug_message=debug_message .. msg
+	add(log_entries, msg)
 end
 
 function make_invinceable()
@@ -761,11 +763,9 @@ function make_invinceable()
 end
 menuitem(2,"invincability", make_invinceable)
 function _update()	
-	_debug_log(stat(0))
-	_debug_log(stat(1))
-	_debug_log(pl.charge)
 	--stepbystep
 	if stepbystep then
+		__draw()
 		if btnp(5,1) then
 			__update()
 		end
@@ -783,7 +783,6 @@ function _update()
 --better way on pico 8
 	if slowmo then
 		for i=0,30000 do
-			poke(rnd(8191)+30000,rnd(255))
 			if btnp(0,1) then
 				slowmo=false
 				realtime=true
@@ -811,7 +810,12 @@ end
 
 function _draw()
 	__draw()
-	debug_message = ""
+	if _debug_enabled() then
+		for i=1,#log_entries do
+			print(log_entries[i],5,i*12)
+		end
+	end
+	log_entries={}
 	if stepbystep then
 		print("stepbystep", 5,5)
 	end
