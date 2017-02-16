@@ -1,0 +1,45 @@
+_title: Realistic Rice
+_subtitle: A Cooking Simulator
+
+init:
+  - write: Dinner time.
+  - write:
+    - Four servings of rice.
+    - That's not so bad.
+    - You can do this.
+  - write:
+    - You rinse the grains.
+    - You measure out some water.
+  - do: t = time()
+    write:
+      - Click.
+      - The cooker is active.
+  - goto: loop
+
+loop:
+  - write:
+    - The rice has been cooking,
+    - but you aren't sure how long.
+  - write: Should you serve it now?
+    options:
+      Yup: serve
+      Naw, wait a bit: loop
+      I'm still thinking...: loop
+serve:
+  - write:
+    - You open the cooker.
+    - Fluffing the grains with
+    - a paddle, you find...
+  - if: rnd() < 0.5
+    then: good
+    else: bad
+
+good:
+  - write: a perfect, if basic, meal.
+  - do: delta = time() - t
+    write-expr: delta.." seconds"
+  - write: And not a moment more.
+
+bad: 
+  - write: an unslightly brown crust.
+  - write: Sad.

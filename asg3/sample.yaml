@@ -1,0 +1,34 @@
+# a comment
+_title: Story Title
+_subtitle: Story Subtitle
+
+init:
+  - write: A line by itself.
+  - write: 
+    - Two lines
+    - together.
+  - do: x = 5
+  - if: x < 13
+    then: low
+    else: high
+
+low: 
+  - write: x was low.
+  - goto: more
+high: 
+  - write: x was high.
+
+more:
+  - write: Which will you choose?
+    options:
+      Cake: chose_cake
+      Death: chose_death
+
+chose_cake:
+  - write: Sweet.
+  - write: The value of x was ... 
+  - write-expr: x
+
+chose_death:
+  - write: Sorry.
+
