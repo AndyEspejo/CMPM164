@@ -6,50 +6,62 @@ __lua__
 --asg3
 
 story = {
-	_title=[[story title]],
-	_subtitle=[[story subtitle]],
-	[ [[chose_cake]] ]={
-		{type='write',line=[[sweet.]]},
+	_title=[[realistic rice]],
+	_subtitle=[[a cooking simulator]],
+	[ [[bad]] ]={
+		{type='write',line=[[an unslightly brown crust.]]},
 		{type='pause'},
-		{type='write',line=[[the value of x was ...]]},
+		{type='write',line=[[sad.]]},
 		{type='pause'},
-		{type='write-expr',expr=function() return x end},
+	}, -- bad
+	[ [[good]] ]={
+		{type='write',line=[[a perfect, if basic, meal.]]},
 		{type='pause'},
-	}, -- chose_cake
-	[ [[high]] ]={
-		{type='write',line=[[x was high.]]},
+		{type='do',code=function() delta = time() - t end},
+		{type='write-expr',expr=function() return delta.." seconds" end},
 		{type='pause'},
-	}, -- high
+		{type='write',line=[[and not a moment more.]]},
+		{type='pause'},
+	}, -- good
+	[ [[serve]] ]={
+		{type='write',line=[[you open the cooker.]]},
+		{type='write',line=[[fluffing the grains with]]},
+		{type='write',line=[[a paddle, you find...]]},
+		{type='pause'},
+		{type='ite',['if']=function() return rnd() < 0.5 end,['then']=[[good]],['else']=[[bad]]},
+		{type='pause'},
+	}, -- serve
 	[ [[init]] ]={
-		{type='write',line=[[a line by itself.]]},
+		{type='write',line=[[dinner time.]]},
 		{type='pause'},
-		{type='write',line=[[two lines]]},
-		{type='write',line=[[together.]]},
+		{type='write',line=[[four servings of rice.]]},
+		{type='write',line=[[that's not so bad.]]},
+		{type='write',line=[[you can do this.]]},
 		{type='pause'},
-		{type='do',code=function() x = 5 end},
+		{type='write',line=[[you rinse the grains.]]},
+		{type='write',line=[[you measure out some water.]]},
 		{type='pause'},
-		{type='ite',['if']=function() return x < 13 end,['then']=[[low]],['else']=[[high]]},
+		{type='do',code=function() t = time() end},
+		{type='write',line=[[click.]]},
+		{type='write',line=[[the cooker is active.]]},
+		{type='pause'},
+		{type='goto',label=[[loop]]},
 		{type='pause'},
 	}, -- init
-	[ [[low]] ]={
-		{type='write',line=[[x was low.]]},
+	[ [[loop]] ]={
+		{type='write',line=[[the rice has been cooking,]]},
+		{type='write',line=[[but you aren't sure how long.]]},
 		{type='pause'},
-		{type='goto',label=[[more]]},
-		{type='pause'},
-	}, -- low
-	[ [[chose_death]] ]={
-		{type='write',line=[[sorry.]]},
-		{type='pause'},
-	}, -- chose_death
-	[ [[more]] ]={
-		{type='write',line=[[which will you choose?]]},
+		{type='write',line=[[should you serve it now?]]},
 		{type='choice',options={
-			{text=[[cake]],label=[[chose_cake]]},
-			{text=[[death]],label=[[chose_death]]},
+			{text=[[yup]],label=[[serve]]},
+			{text=[[i'm still thinking...]],label=[[loop]]},
+			{text=[[naw, wait a bit]],label=[[loop]]},
 		}}, -- options
 		{type='pause'},
-	}, -- chose_death
+	}, -- loop
 }
+
 
 
 states = {
@@ -76,11 +88,11 @@ function _draw()
  j=1
 	for i = 1,#display do
 		j+=1
-		print(display[i],50,30+(j*7))
+		print(display[i],20,30+(j*7))
 	end
 	for i = 1,#options do
 		j+=1
-		print(options[i].text,50,50+(j*7))
+		print(options[i].text,20,50+(j*7))
 	end
  print(current_option,10,50+(j*7))
 	
@@ -96,7 +108,7 @@ function _update()
 			add(display,step.line) --draw next line
 		 index += 1
 		elseif step.type == 'write-expr' then
-			step.code()
+			add(display,step.expr())
 			index += 1
 		elseif step.type == 'goto' then
 			scene = step.label
@@ -128,8 +140,15 @@ function _update()
 		 			current_option = #options
 		 		end
 		 	end
+		 	if btnp(4) then
+		 		scene = options[current_option].label
+					index = 1
+					options = {}
+					display = {}
+				end
 			elseif btnp(4) then
-		 		index+=1
+				 display = {}
+		 		index += 1
 			end
 		end
 	end
