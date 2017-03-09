@@ -1,0 +1,7 @@
+-- begin generated code
+compressed_scenes = {
+	'bird.png' = '119',
+	'doge.png' = '255',
+	'myst.png' = '119',
+}
+-- end generated code
